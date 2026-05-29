@@ -7,7 +7,7 @@
     <div class="aroma-cloud cloud-2"></div>
     <div class="aroma-cloud cloud-3"></div>
     
-    <!-- Floating luxury gold sparks/embers matching mockup -->
+    <!-- Floating luxury gold sparks/embers matching mockup (9 particles for realistic depth) -->
     <div class="embers-container">
       <div class="ember ember-1"></div>
       <div class="ember ember-2"></div>
@@ -16,6 +16,8 @@
       <div class="ember ember-5"></div>
       <div class="ember ember-6"></div>
       <div class="ember ember-7"></div>
+      <div class="ember ember-8"></div>
+      <div class="ember ember-9"></div>
     </div>
   </div>
 
@@ -23,6 +25,7 @@
     <!-- Left Column (Premium Typography & Interactive Actions) -->
     <div class="hero-content">
       <span class="hero-tag">COLECCIÓN EXCLUSIVA DE AUTOR</span>
+      <div class="title-separator"></div>
       <h1 class="hero-title">
         El Lujo que puedes sentir,<br>
         el <em class="gold-text">Aroma</em> que permanece.
@@ -40,6 +43,9 @@
     <div class="hero-showcase">
       <div class="hero-image-wrapper">
         <div class="perfume-container" id="perfumeContainer">
+          <!-- Premium breathing glow flare behind the bottle packaging -->
+          <div class="glow-flare"></div>
+
           <!-- Luxury Matte Black Box behind the bottle (matching Dior Sauvage box exactly) -->
           <div class="luxury-box">
             <div class="box-brand">SAUVAGE</div>
@@ -171,20 +177,22 @@
 
   .ember {
     position: absolute;
-    background: #ff9b36;
+    background: linear-gradient(135deg, #ffa84e 0%, #ff5e00 100%);
     border-radius: 50%;
-    filter: drop-shadow(0 0 5px #ff5900) blur(0.5px);
+    filter: drop-shadow(0 0 6px #ff7700);
     opacity: 0;
     animation: floatEmber infinite linear;
   }
 
-  .ember-1 { left: 10%; top: 40%; width: 2px; height: 2px; animation-duration: 14s; animation-delay: 0s; }
-  .ember-2 { left: 22%; top: 20%; width: 3px; height: 3px; animation-duration: 10s; animation-delay: -3s; }
-  .ember-3 { left: 35%; top: 55%; width: 2px; height: 2px; animation-duration: 18s; animation-delay: -6s; }
-  .ember-4 { left: 45%; top: 30%; width: 3px; height: 3px; animation-duration: 12s; animation-delay: -2s; }
-  .ember-5 { right: 12%; bottom: 20%; width: 4px; height: 4px; animation-duration: 8s; animation-delay: -1s; }
-  .ember-6 { right: 25%; bottom: 35%; width: 2px; height: 2px; animation-duration: 11s; animation-delay: -4s; }
-  .ember-7 { right: 38%; bottom: 15%; width: 3px; height: 3px; animation-duration: 15s; animation-delay: -7s; }
+  .ember-1 { left: 8%; top: 35%; width: 2px; height: 2px; animation-duration: 16s; animation-delay: 0s; filter: blur(0.5px); }
+  .ember-2 { left: 20%; top: 15%; width: 3px; height: 3px; animation-duration: 11s; animation-delay: -3s; }
+  .ember-3 { left: 32%; top: 50%; width: 2px; height: 2px; animation-duration: 20s; animation-delay: -6s; filter: blur(1px); }
+  .ember-4 { left: 48%; top: 25%; width: 3px; height: 3px; animation-duration: 13s; animation-delay: -2s; }
+  .ember-5 { right: 8%; bottom: 15%; width: 4px; height: 4px; animation-duration: 9s; animation-delay: -1s; filter: blur(0.8px); }
+  .ember-6 { right: 22%; bottom: 30%; width: 2px; height: 2px; animation-duration: 12s; animation-delay: -4s; }
+  .ember-7 { right: 35%; bottom: 10%; width: 3px; height: 3px; animation-duration: 17s; animation-delay: -7s; }
+  .ember-8 { left: 15%; bottom: 20%; width: 3px; height: 3px; animation-duration: 14s; animation-delay: -5s; }
+  .ember-9 { right: 42%; top: 15%; width: 2px; height: 2px; animation-duration: 18s; animation-delay: -9s; filter: blur(0.5px); }
 
   @keyframes floatEmber {
     0% {
@@ -229,9 +237,16 @@
     color: var(--gold-light);
     font-weight: 600;
     text-transform: uppercase;
-    margin-bottom: 24px;
+    margin-bottom: 12px;
     opacity: 0.95;
     display: inline-block;
+  }
+
+  .title-separator {
+    width: 60px;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--gold-light), transparent);
+    margin-bottom: 24px;
   }
 
   .hero-title {
@@ -245,8 +260,11 @@
   }
 
   .hero-title .gold-text {
+    background: linear-gradient(135deg, #f4e7c7 0%, #c9a96e 50%, #997839 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
     font-style: italic;
-    color: var(--gold-light);
     font-weight: 400;
   }
 
@@ -293,13 +311,42 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: default; /* Non-interactive static display */
-    transition: transform 0.4s cubic-bezier(.16, 1, .3, 1);
+    cursor: grab; /* Shows 3D interactive cue */
+    transition: transform 0.1s ease-out; /* Immediate mouse response */
+    transform-style: preserve-3d;
+    perspective: 1000px;
     animation: floatUpDown 6s ease-in-out infinite;
   }
 
-  .perfume-container:hover {
-    transform: scale(1.03);
+  .perfume-container:active {
+    cursor: grabbing;
+  }
+
+  /* Luxury back glow flare for theatrical studio lighting */
+  .glow-flare {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(165, 196, 236, 0.15) 0%, rgba(201, 169, 110, 0.08) 45%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(35px);
+    z-index: -3;
+    pointer-events: none;
+    animation: pulseGlow 8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulseGlow {
+    0% {
+      transform: translate(-50%, -50%) scale(0.9);
+      opacity: 0.65;
+    }
+    100% {
+      transform: translate(-50%, -50%) scale(1.1);
+      opacity: 0.95;
+    }
   }
 
   .sauvage-card {
@@ -308,7 +355,11 @@
     aspect-ratio: 400 / 500;
     overflow: visible;
     border-radius: 4px;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.04);
+    /* Gilded gold luxury border & glass top reflection highlight */
+    border: 1px solid rgba(201, 169, 110, 0.22);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.03);
+    transform-style: preserve-3d;
   }
 
   .sauvage-img {
@@ -345,10 +396,6 @@
     border-radius: 2px;
   }
 
-  .perfume-container:hover .luxury-box {
-    transform: perspective(1000px) rotateY(-12deg) rotateX(4deg) rotateZ(0deg) scale(1.02);
-  }
-
   .box-brand {
     font-family: 'Playfair Display', serif;
     font-size: 21px;
@@ -383,14 +430,14 @@
     width: 100%;
   }
 
-  /* Rocky pedestal matching mockup volcanic stone */
+  /* Obsidian/basalt rocky pedestal matching mockup volcanic stone */
   .pedestal-container {
     position: absolute;
-    bottom: -32px;
+    bottom: -35px;
     left: 50%;
     transform: translateX(-50%);
-    width: 115%;
-    height: 70px;
+    width: 120%;
+    height: 75px;
     z-index: -2;
     pointer-events: none;
     overflow: visible;
@@ -399,26 +446,29 @@
   .rock-pedestal {
     width: 100%;
     height: 100%;
-    background: radial-gradient(ellipse at top, #1c222a 0%, #080a0d 100%);
-    border-radius: 50% / 24%;
+    background: linear-gradient(180deg, #1c232c 0%, #06080a 100%);
+    border-radius: 50% / 28%;
     box-shadow: 
-      0 12px 35px rgba(0,0,0,0.95), 
-      inset 0 2px 5px rgba(255,255,255,0.04);
-    border-top: 1.5px solid rgba(255, 255, 255, 0.08);
+      0 15px 40px rgba(0, 0, 0, 0.98), 
+      inset 0 2px 6px rgba(255, 255, 255, 0.05),
+      inset 0 -2px 10px rgba(0, 0, 0, 0.8);
+    border-top: 1.5px solid rgba(201, 169, 110, 0.25); /* Gold rim accent highlight! */
     position: relative;
   }
 
-  /* Extra rocky edge layer to give basalt structure */
+  /* Extra rocky basalt layer for rugged texture */
   .rock-pedestal::after {
     content: '';
     position: absolute;
-    bottom: -15px;
+    bottom: -18px;
     left: 2%;
     width: 96%;
-    height: 30px;
-    background: #050608;
-    border-radius: 50% / 30%;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.95);
+    height: 35px;
+    background: linear-gradient(180deg, #090b0e 0%, #020304 100%);
+    border-radius: 50% / 32%;
+    box-shadow: 
+      0 12px 25px rgba(0,0,0,0.98),
+      inset 0 1px 3px rgba(201, 169, 110, 0.1);
     z-index: -1;
   }
 
@@ -525,6 +575,8 @@
 </style>
 
 <script>
+  import { gsap } from 'gsap';
+
   document.addEventListener('DOMContentLoaded', () => {
     // Bind Hero contact button to open WhatsApp panel
     const heroContactBtn = document.getElementById('heroContactBtn');
@@ -534,6 +586,62 @@
         const waFab = document.getElementById('waFab');
         if (waFab) {
           waFab.click();
+        }
+      });
+    }
+
+    // ── INTERACTIVE 3D PARALLAX TILT EFFECT ──
+    const container = document.getElementById('perfumeContainer');
+    const box = container?.querySelector('.luxury-box');
+
+    if (container) {
+      document.addEventListener('mousemove', (e) => {
+        const { clientX, clientY } = e;
+        const { innerWidth, innerHeight } = window;
+        
+        // Calculate normalized coordinates (-1 to 1)
+        const x = (clientX / innerWidth - 0.5) * 2;
+        const y = (clientY / innerHeight - 0.5) * 2;
+        
+        // Dynamic tilt on the main perfume bottle container
+        gsap.to(container, {
+          rotateY: x * 14,
+          rotateX: -y * 14,
+          transformOrigin: 'center center',
+          duration: 0.7,
+          ease: 'power2.out'
+        });
+        
+        // Parallax offset on the back packaging box (rotates and moves independently)
+        if (box) {
+          gsap.to(box, {
+            x: x * 20,
+            y: y * 15,
+            rotateY: -18 + (x * 6),
+            rotateX: 6 - (y * 6),
+            duration: 0.9,
+            ease: 'power2.out'
+          });
+        }
+      });
+      
+      // Smooth reset when the mouse leaves the browser window
+      document.addEventListener('mouseleave', () => {
+        gsap.to(container, {
+          rotateY: 0,
+          rotateX: 0,
+          duration: 1.2,
+          ease: 'power2.out'
+        });
+        if (box) {
+          gsap.to(box, {
+            x: 0,
+            y: 0,
+            rotateY: -18,
+            rotateX: 6,
+            duration: 1.2,
+            ease: 'power2.out'
+          });
         }
       });
     }
