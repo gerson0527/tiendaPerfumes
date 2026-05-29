@@ -1,0 +1,123 @@
+---
+---
+<header id="header">
+  <a href="#" class="logo">SAVÉE <span>✦</span> SCENT</a>
+  <nav>
+    <a href="#products">COLECCIÓN</a>
+    <a href="#" id="navContact">CONTACTO</a>
+  </nav>
+</header>
+
+<style>
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 28px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background .5s, padding .4s;
+  }
+  
+  header.scrolled {
+    background: rgba(8, 8, 8, .95);
+    backdrop-filter: blur(12px);
+    padding: 18px 48px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    color: var(--white);
+    text-decoration: none;
+  }
+  
+  .logo span {
+    color: var(--gold);
+  }
+  
+  nav {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+  }
+  
+  nav a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    letter-spacing: .25em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color .3s;
+    position: relative;
+  }
+  
+  nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .3s cubic-bezier(.16, 1, .3, 1);
+  }
+  
+  nav a:hover {
+    color: var(--gold);
+  }
+  
+  nav a:hover::after {
+    transform: scaleX(1);
+  }
+
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    header {
+      padding: 18px 24px;
+    }
+    header.scrolled {
+      padding: 12px 24px;
+    }
+    nav {
+      gap: 24px;
+    }
+  }
+  @media (max-width: 480px) {
+    .logo {
+      font-size: 18px;
+      letter-spacing: .15em;
+    }
+    nav {
+      gap: 16px;
+    }
+    nav a {
+      font-size: 12px;
+    }
+  }
+</style>
+
+<script>
+  // Bind Contact link to open the WhatsApp Cart / Contact panel
+  document.addEventListener('DOMContentLoaded', () => {
+    const navContact = document.getElementById('navContact');
+    if (navContact) {
+      navContact.addEventListener('click', (e) => {
+        e.preventDefault();
+        const waFab = document.getElementById('waFab');
+        if (waFab) {
+          // Trigger click on FAB to open checkout panel or direct contact
+          waFab.click();
+        }
+      });
+    }
+  });
+</script>

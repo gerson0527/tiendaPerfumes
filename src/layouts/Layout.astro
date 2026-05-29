@@ -1,0 +1,120 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { 
+  title = "SAVÉE SCENT — Luxury Body Care", 
+  description = "Lociones de autor crafteadas con ingredientes botánicos premium. Lujo que puedes sentir, aroma que permanece." 
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  
+  <!-- PREMIUM TYPOGRAPHY: Geist (Vercel) & Brand Display Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <div class="loader-logo">Savée Scent</div>
+    <div class="loader-bar"></div>
+  </div>
+
+  <!-- PREMIUM CUSTOM CURSOR -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- SLOT FOR PAGE CONTENTS -->
+  <slot />
+
+  <!-- SCRIPTS DE COMPORTAMIENTO GLOBAL -->
+  <script>
+    // ── LOADER DISMISSAL ──
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const loader = document.getElementById('loader');
+        if (loader) loader.classList.add('hidden');
+      }, 1800);
+    });
+
+    // ── CUSTOM CURSOR TRACKING ──
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    
+    if (cursor && ring) {
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      
+      document.addEventListener('mousemove', (e) => {
+        mx = e.clientX;
+        my = e.clientY;
+        // Posicionamiento inmediato del cursor interno
+        cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px)`;
+      });
+      
+      // Animación con inercia para el anillo exterior
+      const animRing = () => {
+        rx += (mx - rx - 18) * 0.12;
+        ry += (my - ry - 18) * 0.12;
+        ring.style.transform = `translate(${rx}px, ${ry}px)`;
+        requestAnimationFrame(animRing);
+      };
+      animRing();
+      
+      // Ampliación del cursor al pasar por encima de elementos interactivos
+      const interactiveSelector = 'a, button, .product-card, .wa-fab, .qty-btn, .collage-item, .autocomplete-item, .clear-search-btn, .popup-thumbnail, .popup-arrow-btn, .popup-close-btn';
+      
+      document.addEventListener('mouseover', (e) => {
+        const target = e.target as HTMLElement;
+        if (target && target.closest(interactiveSelector)) {
+          ring.style.width = '50px';
+          ring.style.height = '50px';
+          ring.style.borderColor = 'var(--gold-light)';
+          cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px) scale(1.5)`;
+        }
+      });
+
+      document.addEventListener('mouseout', (e) => {
+        const target = e.target as HTMLElement;
+        if (target && target.closest(interactiveSelector)) {
+          ring.style.width = '36px';
+          ring.style.height = '36px';
+          ring.style.borderColor = 'var(--gold)';
+          cursor.style.transform = `translate(${mx - 5}px, ${my - 5}px) scale(1)`;
+        }
+      });
+    }
+
+    // ── HEADER SCROLL CONTROLLER ──
+    const header = document.getElementById('header');
+    if (header) {
+      window.addEventListener('scroll', () => {
+        header.classList.toggle('scrolled', window.scrollY > 60);
+      });
+    }
+
+    // ── SCROLL REVEAL OBSERVER ──
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+  </script>
+</body>
+</html>

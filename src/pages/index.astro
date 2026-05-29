@@ -1,0 +1,27 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Products from '../components/Products.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppCart from '../components/WhatsAppCart.astro';
+---
+
+<Layout title="SAVÉE SCENT — Catálogo de Lociones de Autor">
+  <!-- Floating navigation header with checkout bindings -->
+  <Header />
+
+  <main>
+    <!-- Simple and ultra-modern Hero banner detailing the boutique nature -->
+    <Hero />
+
+    <!-- Advanced dynamic filtered catalog grid -->
+    <Products />
+  </main>
+
+  <!-- Site map and signature footer -->
+  <Footer />
+
+  <!-- Interactive WhatsApp Checkout Drawer & FAB button -->
+  <WhatsAppCart />
+</Layout>

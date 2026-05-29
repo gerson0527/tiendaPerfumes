@@ -1,0 +1,137 @@
+---
+
+---
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 SAVÉE SCENT — TODOS LOS DERECHOS RESERVADOS</p>
+    <div class="social-links">
+      <a href="#" aria-label="Instagram">INSTAGRAM</a>
+      <a href="#" aria-label="TikTok">TIKTOK</a>
+      <a href="#" aria-label="Pinterest">PINTEREST</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  footer {
+    padding: 72px 48px 40px;
+    border-top: 1px solid var(--border);
+    background: var(--black);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+  }
+
+  .footer-brand .logo {
+    font-size: 26px;
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--white);
+    text-decoration: none;
+  }
+
+  .footer-brand .logo span {
+    color: var(--gold);
+  }
+
+  .footer-brand p {
+    margin-top: 18px;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+    font-weight: 300;
+    max-width: 280px;
+  }
+
+  .footer-col h4 {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .footer-col a {
+    display: block;
+    font-size: 14px;
+    color: var(--muted);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition:
+      color 0.3s,
+      padding-left 0.3s;
+  }
+
+  .footer-col a:hover {
+    color: var(--white);
+    padding-left: 6px;
+  }
+
+  .footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .footer-bottom p {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--muted);
+  }
+
+  .social-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .social-links a {
+    font-family: "Bebas Neue", sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .social-links a:hover {
+    color: var(--gold);
+  }
+
+  /* Responsive Styling */
+  @media (max-width: 1024px) {
+    .footer-top {
+      grid-template-columns: 1.5fr 1fr 1fr;
+      gap: 40px;
+    }
+    .footer-col:last-child {
+      grid-column: span 3; /* Push Help column wide on smaller desktop screens */
+    }
+  }
+
+  @media (max-width: 768px) {
+    footer {
+      padding: 60px 24px 30px;
+    }
+    .footer-top {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    .footer-col:last-child {
+      grid-column: span 1;
+    }
+    .footer-bottom {
+      flex-direction: column;
+      gap: 20px;
+      text-align: center;
+    }
+  }
+</style>

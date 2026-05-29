@@ -1,0 +1,322 @@
+---
+---
+<!-- ── WHATSAPP OVERLAY & PANEL ─────────────────────── -->
+<div class="wa-overlay" id="waOverlay"></div>
+
+<div class="wa-panel" id="waPanel">
+  <!-- Header -->
+  <div class="wap-header">
+    <div class="wap-avatar">🌿</div>
+    <div class="wap-info">
+      <span class="wap-name">SAVÉE SCENT</span>
+      <span class="wap-status">● En línea · Responde al instante</span>
+    </div>
+    <button class="wap-close" id="wapClose" aria-label="Cerrar panel">✕</button>
+  </div>
+  
+  <!-- Body -->
+  <div class="wap-body" id="wapBody">
+    <!-- Dynamic Cart Bubble -->
+    <div class="wap-cart-bubble" id="wapCart"></div>
+    
+    <!-- Dynamic WhatsApp Message Preview -->
+    <div class="wap-msg-bubble" id="wapMsgBubble">
+      <div class="wap-msg-text" id="wapMsgText"></div>
+      <div class="wap-msg-time" id="wapMsgTime"></div>
+    </div>
+  </div>
+  
+  <!-- Input Comments Area -->
+  <div class="wap-input-row">
+    <textarea class="wap-textarea" id="wapTextarea" rows="2" placeholder="Escribe algo más (opcional)..." aria-label="Detalles adicionales"></textarea>
+    <button class="wap-send" id="wapSend" aria-label="Enviar pedido a WhatsApp">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- FLOATING WHATSAPP BUTTON (FAB) -->
+<div class="wa-float">
+  <div class="wa-bubble-hint" id="waBubbleHint">¿Listo para pedir? 🖤</div>
+  <button class="wa-fab" id="waFab" aria-label="Abrir carrito o contactar por WhatsApp">
+    <div class="wa-pulse"></div>
+    <div class="wa-badge" id="waBadge">0</div>
+    <svg viewBox="0 0 24 24">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.121 1.532 5.849L.057 23.486c-.072.272.015.562.222.756.149.138.344.21.542.21.071 0 .143-.01.213-.029l5.761-1.519C8.205 23.6 10.07 24 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-1.82 0-3.577-.476-5.112-1.376l-.366-.217-3.793 1L3.8 17.4l-.237-.38C2.573 15.477 2 13.775 2 12 2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+    </svg>
+  </button>
+</div>
+
+
+
+<script>
+  // ── CART CONFIGURATION ──
+  const WA_NUMBER = '573001234567'; // Cambia por tu número real en producción
+
+  interface CartItem {
+    name: string;
+    price: number;
+    img: string;
+    notas: string;
+    qty: number;
+  }
+
+  let cart: CartItem[] = [];
+
+  // Helper to fetch formatted time
+  const getTime = () => {
+    const d = new Date();
+    return d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+  };
+
+  // Helper to construct WhatsApp formatted markdown
+  const buildMessage = () => {
+    if (!cart.length) return '';
+    const lines = ['¡Hola! 🖤 Me gustaría hacer un pedido de *Savée Scent*:\n'];
+    let total = 0;
+    cart.forEach(item => {
+      lines.push(`• *${item.name}* x${item.qty} — $${item.price * item.qty}`);
+      total += item.price * item.qty;
+    });
+    lines.push(`\n💰 *Total: $${total}*`);
+    lines.push('\n¿Tienen disponibilidad? ¿Cuál es el proceso de envío? 🙏');
+    return lines.join('\n');
+  };
+
+  // Render the shopping cart lists
+  const renderCart = () => {
+    const cartEl = document.getElementById('wapCart');
+    const msgText = document.getElementById('wapMsgText');
+    const msgTime = document.getElementById('wapMsgTime');
+    const textarea = document.getElementById('wapTextarea') as HTMLInputElement;
+
+    if (!cartEl || !msgText || !msgTime || !textarea) return;
+
+    let total = 0;
+    cart.forEach(i => total += i.price * i.qty);
+
+    if (cart.length === 0) {
+      cartEl.innerHTML = `<div class="wap-cart-title" style="text-align:center; color:var(--muted); padding:10px 0;">TU CARRITO ESTÁ VACÍO ✦</div>`;
+      msgText.textContent = '¡Hola! 🖤 Llegué desde su página web y me gustaría conocer más sobre la colección de lociones *Savée Scent*.';
+      msgTime.textContent = getTime() + ' ✓✓';
+      textarea.value = '';
+      return;
+    }
+
+    // Render cart item blocks
+    const itemsHtml = cart.map((item, idx) => `
+      <div class="wap-cart-item">
+        <img class="wap-item-img" src="${item.img}" alt="${item.name}">
+        <div class="wap-item-info">
+          <span class="wap-item-name">${item.name}</span>
+          <span class="wap-item-price">$${item.price} c/u</span>
+        </div>
+        <div class="wap-item-qty">
+          <button class="qty-btn" data-action="decrement" data-idx="${idx}">−</button>
+          <span class="qty-num">${item.qty}</span>
+          <button class="qty-btn" data-action="increment" data-idx="${idx}">+</button>
+        </div>
+      </div>
+    `).join('');
+
+    cartEl.innerHTML = `
+      <div class="wap-cart-title">🛒 TU PEDIDO</div>
+      ${itemsHtml}
+      <div class="wap-total">
+        <span class="wap-total-label">TOTAL</span>
+        <span class="wap-total-price">$${total}</span>
+      </div>
+    `;
+
+    // Bind event handlers dynamically to quantities triggers
+    cartEl.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const el = e.currentTarget as HTMLButtonElement;
+        const idx = parseInt(el.dataset.idx || '0');
+        const action = el.dataset.action;
+        if (action === 'increment') {
+          changeQty(idx, 1);
+        } else {
+          changeQty(idx, -1);
+        }
+      });
+    });
+
+    // Render message preview
+    const msg = buildMessage();
+    msgText.textContent = msg;
+    msgTime.textContent = getTime() + ' ✓✓';
+  };
+
+  // Modify cart quantities
+  const changeQty = (idx: number, delta: number) => {
+    cart[idx].qty += delta;
+    if (cart[idx].qty <= 0) {
+      cart.splice(idx, 1);
+    }
+    updateBadge();
+    renderCart();
+  };
+
+  // Update FAB floating badge count
+  const updateBadge = () => {
+    const badge = document.getElementById('waBadge');
+    if (!badge) return;
+    const total = cart.reduce((s, i) => s + i.qty, 0);
+    badge.textContent = total.toString();
+    badge.classList.toggle('show', total > 0);
+  };
+
+  // Open sliding chat panel
+  const openPanel = () => {
+    const overlay = document.getElementById('waOverlay');
+    const panel = document.getElementById('waPanel');
+    if (overlay && panel) {
+      overlay.classList.add('open');
+      panel.classList.add('open');
+      renderCart();
+    }
+  };
+
+  // Close sliding chat panel
+  const closePanel = () => {
+    const overlay = document.getElementById('waOverlay');
+    const panel = document.getElementById('waPanel');
+    if (overlay && panel) {
+      overlay.classList.remove('open');
+      panel.classList.remove('open');
+    }
+  };
+
+  // ── EVENT LISTENERS BINDING ──
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. ADD-TO-CART TRIGGERS
+    document.querySelectorAll('.add-btn, .modal-buy-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        
+        let name = '';
+        let price = 0;
+        let img = '';
+        let notas = '';
+
+        const card = target.closest('.product-card') as HTMLElement;
+        if (card) {
+          name = card.dataset.name || '';
+          price = parseInt(card.dataset.price || '0');
+          img = card.dataset.img || '';
+          notas = card.dataset.notas || '';
+        } else {
+          // If clicked inside the popup modal, read data directly off the button attributes
+          name = target.dataset.name || '';
+          price = parseInt(target.dataset.price || '0');
+          img = target.dataset.img || '';
+          notas = target.dataset.notas || '';
+        }
+
+        if (!name) return;
+
+        // Add or increment quantities
+        const existing = cart.find(i => i.name === name);
+        if (existing) {
+          existing.qty++;
+        } else {
+          cart.push({ name, price, img, notas, qty: 1 });
+        }
+        updateBadge();
+
+        // Visual click-feedback on comprar buttons
+        const originalText = target.textContent;
+        target.textContent = '✦ AÑADIDO';
+        target.style.background = '#25D366';
+        target.style.color = '#fff';
+        
+        setTimeout(() => {
+          target.textContent = originalText;
+          target.style.background = '';
+          target.style.color = '';
+        }, 1800);
+
+        // Auto-open panel
+        setTimeout(() => {
+          openPanel();
+        }, 300);
+      });
+    });
+
+    // 2. SEND MESSAGE TRIGGER
+    const wapSend = document.getElementById('wapSend');
+    if (wapSend) {
+      wapSend.addEventListener('click', () => {
+        const textarea = document.getElementById('wapTextarea') as HTMLInputElement;
+        const extra = textarea ? textarea.value.trim() : '';
+        
+        let msg = '';
+        if (cart.length > 0) {
+          msg = buildMessage();
+          if (extra) {
+            msg += '\n\n' + `*Comentarios adicionales:* "${extra}"`;
+          }
+        } else {
+          // If empty cart, send user's custom question or a friendly premium greeting
+          msg = extra || '¡Hola! 🖤 Llegué desde su página web y me gustaría conocer más sobre la colección de lociones *Savée Scent*.';
+        }
+        
+        const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+        window.open(url, '_blank');
+        closePanel();
+      });
+    }
+
+    // 3. REAL-TIME TYPING PREVIEW UPDATES
+    const textarea = document.getElementById('wapTextarea') as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.addEventListener('input', () => {
+        const msgText = document.getElementById('wapMsgText');
+        if (!msgText) return;
+        
+        const val = textarea.value.trim();
+        if (cart.length > 0) {
+          let msg = buildMessage();
+          if (val) {
+            msg += '\n\n' + `*Comentarios adicionales:* "${val}"`;
+          }
+          msgText.textContent = msg;
+        } else {
+          msgText.textContent = val || '¡Hola! 🖤 Llegué desde su página web y me gustaría conocer más sobre la colección de lociones *Savée Scent*.';
+        }
+      });
+    }
+
+    // 4. INTERACTIVE PANELS TRIGGERS
+    const wapClose = document.getElementById('wapClose');
+    const waOverlay = document.getElementById('waOverlay');
+    const waFab = document.getElementById('waFab');
+    const hint = document.getElementById('waBubbleHint');
+
+    if (wapClose) wapClose.addEventListener('click', closePanel);
+    if (waOverlay) waOverlay.addEventListener('click', closePanel);
+
+    if (waFab) {
+      waFab.addEventListener('click', () => {
+        // ALWAYS open the panel so the user can interact, see the luxury drawer, and write custom messages
+        openPanel();
+      });
+
+      // Hover hints trigger
+      if (hint) {
+        waFab.addEventListener('mouseenter', () => hint.classList.add('show'));
+        waFab.addEventListener('mouseleave', () => {
+          setTimeout(() => hint.classList.remove('show'), 2000);
+        });
+      }
+    }
+
+    // 4. GENERAL FLOAT HINTS DELAY DISPLAY
+    if (hint) {
+      setTimeout(() => hint.classList.add('show'), 3500);
+      setTimeout(() => hint.classList.remove('show'), 10000);
+    }
+  });
+</script>
